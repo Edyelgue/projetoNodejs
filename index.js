@@ -19,7 +19,7 @@ app.get('/cad', (req, res) => {
 	res.render(__dirname + '/views/layouts/formulario.handlebars');
 });
 
-app.get('/add', (req, res) => {
+app.post('/add', (req, res) => {
 	res.send('Dados enviados com sucesso!')
 });
 
