@@ -1,26 +1,38 @@
 const express = require("express");
 const app = express();
 const handlebars = require('express-handlebars');
-const Sequelize = require('sequelize');
+const bodyParser = require('body-parser');
+const Post = require('./models/Post');
 
 //==========Config==========
 	//==========Template Engine==========
 	app.engine('handlebars', handlebars.engine());
 	app.set('view engine', 'handlebars');
 
-	//==========Conexão com o banco de dados MySQL==========
-	const sequelize = new Sequelize('logisticaBD', 'root', '', {
-	host: "localhost",
-	dialect: 'mysql'
-});
+	//==========Body Parser==========
+	app.use(bodyParser.urlencoded({extended: false}));
+	app.use(bodyParser.json());
 
 //==========Rotas==========
+app.get('/', (req, res) => {
+	Post.findAll({order: [['id', 'DESC']]}).then((posts) => {
+		res.render(__dirname + '/views/layouts/home.handlebars', {posts: posts});
+	});
+});
+
 app.get('/cad', (req, res) => {
 	res.render(__dirname + '/views/layouts/formulario.handlebars');
 });
 
 app.post('/add', (req, res) => {
-	res.send('Dados enviados com sucesso!')
+	Post.create({
+		titulo: req.body.titulo,
+		conteudo: req.body.conteudo
+	}).then(() => {
+		res.redirect('/')
+	}).catch(() => {
+		res.send(`Houve um erro: ${erro}!`)
+	});
 });
 
 //==========SERVIDOR==========
